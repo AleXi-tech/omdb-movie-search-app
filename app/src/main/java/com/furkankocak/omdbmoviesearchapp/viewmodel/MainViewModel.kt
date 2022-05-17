@@ -14,20 +14,18 @@ class MainViewModel : ViewModel() {
     var listOfMovies:MovieListState by mutableStateOf(MovieListState(listOf()))
     private set
 
-    var movieSpecs: MutableList<MovieDetail> = mutableStateListOf()
+    var movieSpecs: MovieDetailState by mutableStateOf(MovieDetailState(null))
     private set
 
     fun getMovieList(searchValue: String) {
         viewModelScope.launch {
-
             runCatching {
                 ApiClient.service.getData(searchValue)
             }.onSuccess { movieResponse ->
                 if (movieResponse.isSuccessful) {
-                    val searchResults = movieResponse.body()?.movieList
-                    searchResults?.let {
-                        val movieList = searchResults.mapNotNull { if(it.poster != null) it else null }
-                        listOfMovies = listOfMovies.copy(movieList = movieList)
+                    movieResponse.body()?.movieList?.let {
+                        val movieListResponse = it.mapNotNull { if(it.poster != null) it else null }
+                        listOfMovies = listOfMovies.copy(movieList = movieListResponse)
                     }
                     Log.e("DATA", listOfMovies.toString())
                 }
@@ -39,21 +37,15 @@ class MainViewModel : ViewModel() {
 
 
     fun getMovieSpecs(searchValue: String) {
+        movieSpecs = movieSpecs.copy(movieDetail = null)
+
         viewModelScope.launch {
 
             runCatching {
                 ApiClient.service.getMovieData(searchValue)
             }.onSuccess { movieDetail ->
                 if (movieDetail.isSuccessful) {
-                    val searchResults = listOf(movieDetail.body())
-                    searchResults.let {
-                        for (specs in searchResults) {
-                            if (specs?.title != null && specs.poster != null) {
-                                movieSpecs.add(specs)
-                            }
-                        }
-                    }
-                    Log.e("DATA", movieSpecs.toString())
+                    movieSpecs = movieSpecs.copy(movieDetail = movieDetail.body())
                 }
             }.getOrElse {
                 Log.e("DATA ERROR", it.message.toString())
@@ -64,4 +56,8 @@ class MainViewModel : ViewModel() {
 
 data class MovieListState(
     val movieList: List<Movie>
+)
+
+data class MovieDetailState(
+    val movieDetail: MovieDetail? = null
 )

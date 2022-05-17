@@ -1,6 +1,7 @@
 package com.furkankocak.omdbmoviesearchapp
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -43,6 +44,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
 import coil.compose.rememberAsyncImagePainter
 import com.furkankocak.omdbmoviesearchapp.data.Movie
+import com.furkankocak.omdbmoviesearchapp.data.MovieDetail
 import com.furkankocak.omdbmoviesearchapp.ui.theme.OMDbMovieSearchAppTheme
 import com.furkankocak.omdbmoviesearchapp.viewmodel.MainViewModel
 import com.furkankocak.omdbmoviesearchapp.viewmodel.MovieListState
@@ -60,7 +62,9 @@ class MainActivity : ComponentActivity() {
             OMDbMovieSearchAppTheme {
                 SearchMovieScreen(viewModel)
                 if (showMovieWindow.value) {
-                    PopUpInfo(viewModel)
+                    viewModel.movieSpecs.movieDetail?.let {
+                        PopUpInfo(it)
+                    }
                 }
             }
         }
@@ -79,7 +83,6 @@ fun SearchMovieScreen(vmInput: MainViewModel) {
     fun detailsButton(movie: Movie) {
         showMovieWindow.value = true
         focusManager.clearFocus()
-        vmInput.movieSpecs.clear()
         vmInput.getMovieSpecs(movie.imdbID.toString())
     }
 
@@ -192,7 +195,7 @@ fun SearchMovieScreen(vmInput: MainViewModel) {
 }
 
 @Composable
-fun PopUpInfo(viewModel: MainViewModel) {
+fun PopUpInfo(specs: MovieDetail) {
 
     val listState = rememberLazyListState()
 
@@ -227,7 +230,7 @@ fun PopUpInfo(viewModel: MainViewModel) {
                     state = listState,
                     modifier = Modifier.scrollable(listState, orientation = Orientation.Vertical)
                 ) {
-                    items(viewModel.movieSpecs) { specs ->
+                    item {
                         Column {
                             Box(
                                 contentAlignment = Alignment.TopCenter,
