@@ -10,7 +10,7 @@ import com.furkankocak.omdbmoviesearchapp.network.ApiClient
 import kotlinx.coroutines.launch
 
 class MainViewModel : ViewModel() {
-
+//list
     var listOfMovies:MovieListState by mutableStateOf(MovieListState(listOf()))
     private set
 
