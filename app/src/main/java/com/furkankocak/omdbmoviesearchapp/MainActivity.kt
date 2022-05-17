@@ -84,7 +84,7 @@ fun SearchMovieScreen(vmInput: MainViewModel) {
     //POPUP pencere kontrolünün Saveable state içerisine atılması
     showMovieWindow = rememberSaveable { mutableStateOf(false) }
 
-    //TextField dan çıkış için clear focus
+    //TextField dan çıkış ve klavye gizlemek için clear focus
     val focusManager = LocalFocusManager.current
 
     //TextField daki text in State ini tutmak için
@@ -143,7 +143,7 @@ fun SearchMovieScreen(vmInput: MainViewModel) {
                             )
                             {
                                 Row() {
-                                    Image(
+                                    Image( //Listedeki posterler
                                         painter = rememberAsyncImagePainter(movie.poster),
                                         contentDescription = null,
                                         Modifier
@@ -151,7 +151,7 @@ fun SearchMovieScreen(vmInput: MainViewModel) {
                                             .height(100.dp)
                                     )
                                     Column() {
-                                        Text(
+                                        Text( //Liste film başlıkları
                                             movie.title,
                                             maxLines = 1,
                                             overflow = TextOverflow.Ellipsis,
@@ -161,7 +161,7 @@ fun SearchMovieScreen(vmInput: MainViewModel) {
                                             fontWeight = FontWeight.Bold
                                         )
                                         Row() {
-                                            Text(
+                                            Text( //Liste film yıl ve tipi
                                                 movie.year!! + " " + "(${movie.type})",
                                                 maxLines = 1,
                                                 overflow = TextOverflow.Ellipsis,
@@ -174,7 +174,7 @@ fun SearchMovieScreen(vmInput: MainViewModel) {
                                                 modifier = Modifier.fillMaxSize(),
                                                 contentAlignment = Alignment.BottomEnd
                                             ) {
-                                                Button(onClick = {
+                                                Button(onClick = { //POPUP ekranı için true değeri ve detay requesti
                                                     showMovieWindow.value = true
                                                     focusManager.clearFocus()
                                                     vmInput.getMovieSpecs(movie.imdbID.toString())
