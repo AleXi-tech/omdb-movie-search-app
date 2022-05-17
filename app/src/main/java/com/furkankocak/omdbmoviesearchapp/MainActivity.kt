@@ -61,6 +61,12 @@ class MainActivity : ComponentActivity() {
         setContent {
             OMDbMovieSearchAppTheme {
                 SearchMovieScreen(viewModel)
+
+                /**
+                 * POPUP penceresinin açılması için showMovieWindow adında State oluşturduk
+                 * ve DETAILS ve EXIT butonlarının onClick metodları içerisnde boolean
+                 * değerini kontrol ederek if kontrolü ile açılıp kapanmasını denetliyoruz.
+                 */
                 if (showMovieWindow.value) {
                     viewModel.movieSpecs.movieDetail?.let {
                         PopUpInfo(it)
@@ -71,25 +77,18 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+// Ana arama ekranı
 @Composable
 fun SearchMovieScreen(vmInput: MainViewModel) {
 
+    //POPUP pencere kontrolünün Saveable state içerisine atılması
     showMovieWindow = rememberSaveable { mutableStateOf(false) }
 
+    //TextField dan çıkış için clear focus
     val focusManager = LocalFocusManager.current
 
+    //TextField daki text in State ini tutmak için
     var searchValue by rememberSaveable { mutableStateOf("") }
-
-    fun detailsButton(movie: Movie) {
-        showMovieWindow.value = true
-        focusManager.clearFocus()
-        vmInput.getMovieSpecs(movie.imdbID.toString())
-    }
-
-    fun searchButton() {
-        vmInput.getMovieList(searchValue)
-        focusManager.clearFocus()
-    }
 
     Scaffold(content = {
         Column(modifier = Modifier
@@ -101,7 +100,7 @@ fun SearchMovieScreen(vmInput: MainViewModel) {
                 contentAlignment = Alignment.CenterStart
             ) {
                 Row() {
-                    OutlinedTextField(
+                    OutlinedTextField( //Arama yapılacak TextField
                         value = searchValue,
                         colors = TextFieldDefaults.textFieldColors(textColor = Color.Black),
                         onValueChange = { searchValue = it },
@@ -114,8 +113,10 @@ fun SearchMovieScreen(vmInput: MainViewModel) {
                         },
 
                         )
-                    Button(
-                        onClick = { searchButton() },
+                    Button( //SEARCH BUTONU
+                        onClick = { //TextField içerisindeki değer ile retrofit sorgusu ve clearfocus
+                            vmInput.getMovieList(searchValue)
+                            focusManager.clearFocus() },
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(70.dp)
@@ -173,7 +174,11 @@ fun SearchMovieScreen(vmInput: MainViewModel) {
                                                 modifier = Modifier.fillMaxSize(),
                                                 contentAlignment = Alignment.BottomEnd
                                             ) {
-                                                Button(onClick = { detailsButton(movie) })
+                                                Button(onClick = {
+                                                    showMovieWindow.value = true
+                                                    focusManager.clearFocus()
+                                                    vmInput.getMovieSpecs(movie.imdbID.toString())
+                                                })
                                                 { Text(text = "Details") }
                                             }
                                         }
@@ -194,6 +199,11 @@ fun SearchMovieScreen(vmInput: MainViewModel) {
     )
 }
 
+
+/**
+ * Ekrana gelen sonuçlar içerisinde DETAILS butonuna tıklama sonucunda açılacak
+ * olan POPUP film detayı penceremiz
+ * */
 @Composable
 fun PopUpInfo(specs: MovieDetail) {
 
@@ -206,8 +216,8 @@ fun PopUpInfo(specs: MovieDetail) {
                     contentAlignment = Alignment.TopEnd,
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    OutlinedButton(
-                        onClick = { showMovieWindow.value = false },
+                    OutlinedButton(  //POPUP ÇIKIŞ BUTONU
+                        onClick = { showMovieWindow.value = false }, //POPUP pencere kapatma
                         shape = CircleShape,
                         elevation = ButtonDefaults.elevation(8.dp),
                         colors = ButtonDefaults.buttonColors(
@@ -223,20 +233,22 @@ fun PopUpInfo(specs: MovieDetail) {
                 Modifier
                     .fillMaxSize()
                     .padding(30.dp)
-                    .border(BorderStroke(2.dp, Color.Red), shape = RoundedCornerShape(25.dp))
+                    .border(BorderStroke(2.dp, Color.Red),
+                        shape = RoundedCornerShape(25.dp))
                     .background(Color.White, RoundedCornerShape(25.dp))
             ) {
                 LazyColumn(
                     state = listState,
-                    modifier = Modifier.scrollable(listState, orientation = Orientation.Vertical)
+                    modifier = Modifier.scrollable(listState,
+                        orientation = Orientation.Vertical)
                 ) {
-                    item {
+                    item {  // specs değeri doğrudan constructor içerisinden çağırılıyor
                         Column {
                             Box(
                                 contentAlignment = Alignment.TopCenter,
                                 modifier = Modifier.fillMaxWidth()
                             ) {
-                                Image(
+                                Image( //POPUP FİLM POSTERİ
                                     painter = rememberAsyncImagePainter(specs.poster),
                                     contentDescription = null,
                                     Modifier
@@ -250,12 +262,13 @@ fun PopUpInfo(specs: MovieDetail) {
                                     .fillMaxWidth()
                                     .wrapContentHeight()
                             ) {
-                                Text(
+                                Text( //POPUP FİLM BAŞLIĞI
                                     text = specs.title,
                                     fontSize = 20.sp,
                                     fontWeight = FontWeight.Bold,
                                     textAlign = TextAlign.Center,
-                                    modifier = Modifier.padding(horizontal = 10.dp)
+                                    modifier = Modifier
+                                        .padding(horizontal = 10.dp)
                                 )
                             }
                             Box(
@@ -265,29 +278,35 @@ fun PopUpInfo(specs: MovieDetail) {
                                     .height(50.dp)
                             ) {
                                 Row() {
-                                    Text(buildAnnotatedString {
-                                        withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                                    Text(buildAnnotatedString { //POPUP FİLM IMDb PUANI
+                                        withStyle(style = SpanStyle(
+                                            fontWeight = FontWeight.Bold)) {
                                             append("IMDb Rating :")
                                         }
                                         append(specs.imdbRating!!)
                                     })
-                                    Text(text = "", modifier = Modifier.padding(horizontal = 10.dp))
-                                    Text(buildAnnotatedString {
-                                        withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                                    Text(
+                                        text = "", modifier = Modifier.padding(horizontal = 10.dp
+                                        ))
+                                    Text(buildAnnotatedString { //POPUP FİLM SÜRESİ
+                                        withStyle(style = SpanStyle(
+                                            fontWeight = FontWeight.Bold)) {
                                             append("Duration :")
                                         }
                                         append(specs.runtime!!)
                                     })
                                 }
                             }
-                            Text(buildAnnotatedString {
-                                withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                            Text(buildAnnotatedString { //POPUP FİLM AKTÖRLERİ
+                                withStyle(style = SpanStyle(
+                                    fontWeight = FontWeight.Bold)) {
                                     append("Actors :")
                                 }
                                 append(specs.actors!!)
                             }, modifier = Modifier.padding(horizontal = 20.dp))
-                            Text(buildAnnotatedString {
-                                withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                            Text(buildAnnotatedString { //POPUP FİLM YÖNETMENİ
+                                withStyle(style = SpanStyle(
+                                    fontWeight = FontWeight.Bold)) {
                                     append("Director :")
                                 }
                                 append(specs.director!!)
@@ -307,7 +326,7 @@ fun PopUpInfo(specs: MovieDetail) {
                                 modifier = Modifier
                                     .fillMaxWidth()
                             ) {
-                                Text(
+                                Text( //POPUP FİLM HİKAYE İÇERİĞİ
                                     text = specs.plot!!,
                                     modifier = Modifier
                                         .padding(horizontal = 20.dp)

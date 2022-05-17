@@ -10,14 +10,25 @@ import com.furkankocak.omdbmoviesearchapp.network.ApiClient
 import kotlinx.coroutines.launch
 
 class MainViewModel : ViewModel() {
-//list
+
+    /**  Configuration change sırasında veri kaybı olmaması için stateleri
+    Compose içerisinde Bundle içinde tutmak yerine yerine
+    doğrudan viewModel içerisinde atıyoruz */
+
     var listOfMovies:MovieListState by mutableStateOf(MovieListState(listOf()))
     private set
 
     var movieSpecs: MovieDetailState by mutableStateOf(MovieDetailState(null))
     private set
 
+
+    //Film listesini coroutine ile çektiğimiz fonksiyon
     fun getMovieList(searchValue: String) {
+
+        //  Her seferinde listeyi sıfırlıyoruz ki listenin null dönemesi durumunda
+        //ekrandaki liste sıfırlansın
+        listOfMovies = listOfMovies.copy(movieList = listOfNotNull())
+
         viewModelScope.launch {
             runCatching {
                 ApiClient.service.getData(searchValue)
@@ -35,12 +46,13 @@ class MainViewModel : ViewModel() {
         }
     }
 
-
+    //Film detayları çekme
     fun getMovieSpecs(searchValue: String) {
+
+        //Sıfırlama
         movieSpecs = movieSpecs.copy(movieDetail = null)
 
         viewModelScope.launch {
-
             runCatching {
                 ApiClient.service.getMovieData(searchValue)
             }.onSuccess { movieDetail ->
@@ -54,6 +66,7 @@ class MainViewModel : ViewModel() {
     }
 }
 
+//Doğrudan state kontrolü yapamadığım için data class lar ile atadım
 data class MovieListState(
     val movieList: List<Movie>
 )
