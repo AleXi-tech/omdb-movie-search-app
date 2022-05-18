@@ -1,7 +1,6 @@
 package com.furkankocak.omdbmoviesearchapp
 
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -43,11 +42,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
 import coil.compose.rememberAsyncImagePainter
-import com.furkankocak.omdbmoviesearchapp.data.Movie
 import com.furkankocak.omdbmoviesearchapp.data.MovieDetail
 import com.furkankocak.omdbmoviesearchapp.ui.theme.OMDbMovieSearchAppTheme
 import com.furkankocak.omdbmoviesearchapp.viewmodel.MainViewModel
-import com.furkankocak.omdbmoviesearchapp.viewmodel.MovieListState
+
 
 private var showMovieWindow = mutableStateOf(false)
 
