@@ -6,7 +6,6 @@ Oska Yazılım Junior Android Kotlin Developer ilanı için geliştirilmiştir.
 -
 Ahmet Furkan KOÇAK
 ahmetfurkankocak@gmail.com
-+905418422829
 -
 -
 -
