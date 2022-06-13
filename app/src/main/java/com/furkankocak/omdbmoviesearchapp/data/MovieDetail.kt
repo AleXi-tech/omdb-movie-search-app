@@ -5,53 +5,53 @@ import com.google.gson.annotations.SerializedName
 
 data class MovieDetail(
     @SerializedName("Title")
-    var title: String,
+    var title: String="",
     @SerializedName("Year")
-    var year: String?,
+    var year: String?="",
     @SerializedName("imdbID")
-    var imdbID: String?,
+    var imdbID: String?="",
     @SerializedName("Poster")
-    var poster: String?,
+    var poster: String?="",
     @SerializedName("Type")
-    var type: String?,
+    var type: String?="",
     @SerializedName("Rated")
-    var rated: String?,
+    var rated: String?="",
     @SerializedName("Released")
-    var released: String?,
+    var released: String?="",
     @SerializedName("Runtime")
-    var runtime: String?,
+    var runtime: String?="",
     @SerializedName("Genre")
-    var genre: String?,
+    var genre: String?="",
     @SerializedName("Director")
-    var director: String?,
+    var director: String?="",
     @SerializedName("Writer")
-    var writer: String?,
+    var writer: String?="",
     @SerializedName("Actors")
-    var actors: String?,
+    var actors: String?="",
     @SerializedName("Plot")
-    var plot: String?,
+    var plot: String?="",
     @SerializedName("Language")
-    var language: String?,
+    var language: String?="",
     @SerializedName("Country")
-    var country: String?,
+    var country: String?="",
     @SerializedName("Awards")
-    var awards: String?,
+    var awards: String?="",
     @SerializedName("Ratings")
-    var ratings: List<Rating>?,
+    var ratings: List<Rating>?= emptyList(),
     @SerializedName("Metascore")
-    var metascore: String?,
+    var metascore: String?="",
     @SerializedName("imdbRating")
-    var imdbRating: String?,
+    var imdbRating: String?="",
     @SerializedName("imdbVotes")
-    var imdbVotes: String?,
+    var imdbVotes: String?="",
     @SerializedName("DVD")
-    var dvd: String?,
+    var dvd: String?="",
     @SerializedName("BoxOffice")
-    var boxOffice: String?,
+    var boxOffice: String?="",
     @SerializedName("Production")
-    var production: String?,
+    var production: String?="",
     @SerializedName("Website")
-    var website: String?,
+    var website: String?="",
     @SerializedName("Response")
-    var response: String?
+    var response: String?=""
 )
