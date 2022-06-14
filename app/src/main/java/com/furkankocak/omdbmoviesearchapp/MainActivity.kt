@@ -278,7 +278,7 @@ fun PopUpInfo(
                                     .wrapContentHeight()
                             ) {
                                 Text( //POPUP FİLM BAŞLIĞI
-                                    text = specs.title.toString(),
+                                    text = specs.title!!,
                                     fontSize = 20.sp,
                                     fontWeight = FontWeight.Bold,
                                     textAlign = TextAlign.Center,
