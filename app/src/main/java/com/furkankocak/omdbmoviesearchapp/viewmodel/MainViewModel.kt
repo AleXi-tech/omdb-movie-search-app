@@ -18,7 +18,7 @@ class MainViewModel : ViewModel() {
     var listOfMovies = mutableStateListOf<Movie>()
         private set
 
-    var movieSpecs = mutableStateOf(MovieDetail())
+    var movieSpecs: MovieDetail? by mutableStateOf(null)
         private set
 
 
@@ -39,7 +39,7 @@ class MainViewModel : ViewModel() {
                             it.mapNotNull { if (it.poster != null) it else null }
                         listOfMovies.addAll(movieListResponse)
                     }
-                    //Log.e("DATA", listOfMovies.toString())
+                    Log.e("DATA", listOfMovies.toString())
                 }
             }.getOrElse {
                 Log.e("DATA ERROR", it.message.toString())
@@ -51,14 +51,14 @@ class MainViewModel : ViewModel() {
     fun getMovieSpecs(searchValue: String) {
 
         //Reset datas
-        movieSpecs.value = MovieDetail()
+        movieSpecs = MovieDetail()
 
         viewModelScope.launch {
             runCatching {
                 ApiClient.service.getMovieData(searchValue)
             }.onSuccess { movieDetail ->
                 if (movieDetail.isSuccessful) {
-                    movieSpecs.value = movieDetail.body()!!
+                    movieSpecs = movieDetail.body()!!
                     //Log.e("DATA", movieSpecs.value.toString())
                 }
             }.getOrElse {

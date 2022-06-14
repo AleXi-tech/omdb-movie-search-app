@@ -80,8 +80,10 @@ fun Screen(vmInput: MainViewModel) {
      * değerini kontrol ederek if kontrolü ile açılıp kapanmasını denetliyoruz.
      */
     if (showMovieWindow) {
-        vmInput.movieSpecs.value.let {
-            PopUpInfo(it, showMovieWindowFun = { showMovieWindow = it })
+        vmInput.movieSpecs.let {
+            if (it != null) {
+                PopUpInfo(it, showMovieWindowFun = { showMovieWindow = it })
+            }
         }
     }
 
@@ -276,7 +278,7 @@ fun PopUpInfo(
                                     .wrapContentHeight()
                             ) {
                                 Text( //POPUP FİLM BAŞLIĞI
-                                    text = specs.title,
+                                    text = specs.title.toString(),
                                     fontSize = 20.sp,
                                     fontWeight = FontWeight.Bold,
                                     textAlign = TextAlign.Center,
