@@ -15,11 +15,19 @@ class MainViewModel : ViewModel() {
     Compose içerisinde Bundle içinde tutmak yerine yerine
     doğrudan viewModel içerisinde atıyoruz */
 
+
+    var showMovieWindow by mutableStateOf(false)
+
     var listOfMovies:MovieListState by mutableStateOf(MovieListState(listOf()))
         private set
 
     var movieSpecs: MovieDetailState by mutableStateOf(MovieDetailState(null))
         private set
+
+
+    fun onShowMovieWindowChange(value: Boolean){
+        showMovieWindow = value
+    }
 
 
     //Film listesini coroutine ile çektiğimiz fonksiyon
