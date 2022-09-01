@@ -8,4 +8,5 @@
 - #### Coil
 - #### Navigation
 - #### Splash Screen
-https://user-images.githubusercontent.com/67434047/168922461-922d3a4d-0853-4e60-be1b-51d3af69ac9a.mp4
+
+[screencast-Genymotion-2022-09-01_23.03.45.605.webm](https://user-images.githubusercontent.com/67434047/188002515-680475c4-09a9-4b76-b4ac-fcb42350a01e.webm)
