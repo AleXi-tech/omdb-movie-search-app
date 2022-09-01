@@ -15,19 +15,19 @@ class MainViewModel : ViewModel() {
     Compose içerisinde Bundle içinde tutmak yerine yerine
     doğrudan viewModel içerisinde atıyoruz */
 
-    var listOfMovies = mutableStateListOf<Movie>()
+    var listOfMovies:MovieListState by mutableStateOf(MovieListState(listOf()))
         private set
 
-    var movieSpecs: MovieDetail? by mutableStateOf(null)
+    var movieSpecs: MovieDetailState by mutableStateOf(MovieDetailState(null))
         private set
 
 
     //Film listesini coroutine ile çektiğimiz fonksiyon
     fun getMovieList(searchValue: String) {
 
-        //Resetting list every time to prevent add ups and display blank list on null returns
-        listOfMovies.removeAll(listOfMovies)
-
+        //  Her seferinde listeyi sıfırlıyoruz ki listenin null dönemesi durumunda
+        //ekrandaki liste sıfırlansın
+        listOfMovies = listOfMovies.copy(movieList = listOfNotNull())
 
         viewModelScope.launch {
             runCatching {
@@ -35,9 +35,8 @@ class MainViewModel : ViewModel() {
             }.onSuccess { movieResponse ->
                 if (movieResponse.isSuccessful) {
                     movieResponse.body()?.movieList?.let {
-                        val movieListResponse =
-                            it.mapNotNull { if (it.poster != null) it else null }
-                        listOfMovies.addAll(movieListResponse)
+                        val movieListResponse = it.mapNotNull { if(it.poster != null) it else null }
+                        listOfMovies = listOfMovies.copy(movieList = movieListResponse)
                     }
                     Log.e("DATA", listOfMovies.toString())
                 }
@@ -50,16 +49,15 @@ class MainViewModel : ViewModel() {
     //Film detayları çekme
     fun getMovieSpecs(searchValue: String) {
 
-        //Reset datas
-        movieSpecs = MovieDetail()
+        //Sıfırlama
+        movieSpecs = movieSpecs.copy(movieDetail = null)
 
         viewModelScope.launch {
             runCatching {
                 ApiClient.service.getMovieData(searchValue)
             }.onSuccess { movieDetail ->
                 if (movieDetail.isSuccessful) {
-                    movieSpecs = movieDetail.body()!!
-                    //Log.e("DATA", movieSpecs.value.toString())
+                    movieSpecs = movieSpecs.copy(movieDetail = movieDetail.body())
                 }
             }.getOrElse {
                 Log.e("DATA ERROR", it.message.toString())
@@ -67,3 +65,12 @@ class MainViewModel : ViewModel() {
         }
     }
 }
+
+//Doğrudan state kontrolü yapamadığım için data class lar ile atadım
+data class MovieListState(
+    val movieList: List<Movie>
+)
+
+data class MovieDetailState(
+    val movieDetail: MovieDetail? = null
+)

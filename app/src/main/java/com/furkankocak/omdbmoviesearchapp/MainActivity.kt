@@ -8,10 +8,13 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
@@ -43,6 +46,9 @@ import com.furkankocak.omdbmoviesearchapp.data.MovieDetail
 import com.furkankocak.omdbmoviesearchapp.ui.theme.OMDbMovieSearchAppTheme
 import com.furkankocak.omdbmoviesearchapp.viewmodel.MainViewModel
 
+
+private var showMovieWindow = mutableStateOf(false)
+
 class MainActivity : ComponentActivity() {
 
     private val viewModel: MainViewModel by viewModels()
@@ -52,166 +58,143 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             OMDbMovieSearchAppTheme {
-                Screen(vmInput = viewModel)
-            }
-        }
-    }
-}
+                SearchMovieScreen(viewModel)
 
-@Composable
-fun Screen(vmInput: MainViewModel) {
-
-    //POPUP window controller state
-    var showMovieWindow by rememberSaveable { mutableStateOf(false) }
-
-    //TextField state holder
-    var searchValue by rememberSaveable { mutableStateOf("") }
-
-    SearchMovieScreen(
-        vmInput = vmInput,
-        searchValueStr = searchValue,
-        onValueChangeFun = { searchValue = it },
-        showMovieWindowFun = { showMovieWindow = it }
-    )
-
-    /**
-     * POPUP penceresinin açılması için showMovieWindow adında State oluşturduk
-     * ve DETAILS ve EXIT butonlarının onClick metodları içerisnde boolean
-     * değerini kontrol ederek if kontrolü ile açılıp kapanmasını denetliyoruz.
-     */
-    if (showMovieWindow) {
-        vmInput.movieSpecs.let {
-            if (it != null) {
-                PopUpInfo(it, showMovieWindowFun = { showMovieWindow = it })
-            }
-        }
-    }
-
-}
-
-
-// Main movie search screen
-@Composable
-fun SearchMovieScreen(
-    vmInput: MainViewModel,
-    searchValueStr: String,
-    onValueChangeFun: (String) -> Unit,
-    showMovieWindowFun: (Boolean) -> Unit
-) {
-
-    //TextField exit and clear focus variable
-    val focusManager = LocalFocusManager.current
-
-    Column(modifier = Modifier
-        .padding(16.dp)
-        .pointerInput(Unit) { detectTapGestures(onTap = { focusManager.clearFocus() }) })
-    {
-        Box(
-            modifier = Modifier.fillMaxWidth(),
-            contentAlignment = Alignment.CenterStart
-        ) {
-            Row() {
-                OutlinedTextField(
-                    //Arama yapılacak TextField
-                    value = searchValueStr,
-                    colors = TextFieldDefaults.textFieldColors(textColor = Color.Black),
-                    onValueChange = {
-                        onValueChangeFun(it)
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth(0.65f)
-                        .height(70.dp),
-                    label = { Text("Search Movie Title") },
-                    leadingIcon = {
-                        Icon(Icons.Default.Search, contentDescription = "Search Icon")
-                    },
-
-                    )
-                Button( //SEARCH BUTTON
-                    onClick = { //TextField içerisindeki değer ile retrofit sorgusu ve clearfocus
-                        vmInput.getMovieList(searchValueStr)
-                        focusManager.clearFocus()
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(70.dp)
-                        .padding(3.dp)
-                ) {
-                    Text(text = "SEARCH")
+                /**
+                 * POPUP penceresinin açılması için showMovieWindow adında State oluşturduk
+                 * ve DETAILS ve EXIT butonlarının onClick metodları içerisnde boolean
+                 * değerini kontrol ederek if kontrolü ile açılıp kapanmasını denetliyoruz.
+                 */
+                if (showMovieWindow.value) {
+                    viewModel.movieSpecs.movieDetail?.let {
+                        PopUpInfo(it)
+                    }
                 }
             }
         }
-        LazyColumn(
-            modifier = Modifier.fillMaxHeight()
-        ) {
-            items(vmInput.listOfMovies) { movie ->
-                Column {
-                    Row(
+    }
+}
+
+// Ana arama ekranı
+@Composable
+fun SearchMovieScreen(vmInput: MainViewModel) {
+
+    //POPUP pencere kontrolünün Saveable state içerisine atılması
+    showMovieWindow = rememberSaveable { mutableStateOf(false) }
+
+    //TextField dan çıkış ve klavye gizlemek için clear focus
+    val focusManager = LocalFocusManager.current
+
+    //TextField daki text in State ini tutmak için
+    var searchValue by rememberSaveable { mutableStateOf("") }
+
+    Scaffold(content = {
+        Column(modifier = Modifier
+            .padding(16.dp)
+            .pointerInput(Unit) { detectTapGestures(onTap = { focusManager.clearFocus() }) })
+        {
+            Box(
+                modifier = Modifier.fillMaxWidth(),
+                contentAlignment = Alignment.CenterStart
+            ) {
+                Row() {
+                    OutlinedTextField( //Arama yapılacak TextField
+                        value = searchValue,
+                        colors = TextFieldDefaults.textFieldColors(textColor = Color.Black),
+                        onValueChange = { searchValue = it },
+                        modifier = Modifier
+                            .fillMaxWidth(0.65f)
+                            .height(70.dp),
+                        label = { Text("Search Movie Title") },
+                        leadingIcon = {
+                            Icon(Icons.Default.Search, contentDescription = "Search Icon")
+                        },
+
+                        )
+                    Button( //SEARCH BUTONU
+                        onClick = { //TextField içerisindeki değer ile retrofit sorgusu ve clearfocus
+                            vmInput.getMovieList(searchValue)
+                            focusManager.clearFocus() },
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(16.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    )
-                    {
-                        Box(
+                            .height(70.dp)
+                            .padding(3.dp)
+                    ) {
+                        Text(text = "SEARCH")
+                    }
+                }
+            }
+            LazyColumn(modifier = Modifier.fillMaxHeight()) {
+                items(vmInput.listOfMovies.movieList) { movie ->
+                    Column {
+                        Row(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(0.dp, 0.dp, 16.dp, 0.dp)
+                                .padding(16.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween
                         )
                         {
-                            Row() {
-                                Image( //Listedeki posterler
-                                    painter = rememberAsyncImagePainter(movie.poster),
-                                    contentDescription = null,
-                                    Modifier
-                                        .width(50.dp)
-                                        .height(100.dp)
-                                )
-                                Column() {
-                                    Text( //Liste film başlıkları
-                                        movie.title,
-                                        maxLines = 1,
-                                        overflow = TextOverflow.Ellipsis,
-                                        color = Color.Black,
-                                        modifier = Modifier.padding(10.dp),
-                                        fontSize = 20.sp,
-                                        fontWeight = FontWeight.Bold
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(0.dp, 0.dp, 16.dp, 0.dp)
+                            )
+                            {
+                                Row() {
+                                    Image( //Listedeki posterler
+                                        painter = rememberAsyncImagePainter(movie.poster),
+                                        contentDescription = null,
+                                        Modifier
+                                            .width(50.dp)
+                                            .height(100.dp)
                                     )
-                                    Row() {
-                                        Text( //Liste film yıl ve tipi
-                                            movie.year!! + " " + "(${movie.type})",
+                                    Column() {
+                                        Text( //Liste film başlıkları
+                                            movie.title,
                                             maxLines = 1,
                                             overflow = TextOverflow.Ellipsis,
                                             color = Color.Black,
                                             modifier = Modifier.padding(10.dp),
                                             fontSize = 20.sp,
-                                            fontStyle = FontStyle.Italic
+                                            fontWeight = FontWeight.Bold
                                         )
-                                        Box(
-                                            modifier = Modifier.fillMaxSize(),
-                                            contentAlignment = Alignment.BottomEnd
-                                        ) {
-                                            Button(onClick = { //POPUP ekranı için true değeri ve detay requesti
-                                                showMovieWindowFun(true)
-                                                focusManager.clearFocus()
-                                                vmInput.getMovieSpecs(movie.imdbID.toString())
-                                            })
-                                            { Text(text = "Details") }
+                                        Row() {
+                                            Text( //Liste film yıl ve tipi
+                                                movie.year!! + " " + "(${movie.type})",
+                                                maxLines = 1,
+                                                overflow = TextOverflow.Ellipsis,
+                                                color = Color.Black,
+                                                modifier = Modifier.padding(10.dp),
+                                                fontSize = 20.sp,
+                                                fontStyle = FontStyle.Italic
+                                            )
+                                            Box(
+                                                modifier = Modifier.fillMaxSize(),
+                                                contentAlignment = Alignment.BottomEnd
+                                            ) {
+                                                Button(onClick = { //POPUP ekranı için true değeri ve detay requesti
+                                                    showMovieWindow.value = true
+                                                    focusManager.clearFocus()
+                                                    vmInput.getMovieSpecs(movie.imdbID.toString())
+                                                })
+                                                { Text(text = "Details") }
+                                            }
                                         }
                                     }
                                 }
                             }
+                            Spacer(modifier = Modifier.width(16.dp))
                         }
-                        Spacer(modifier = Modifier.width(16.dp))
+                        Divider()
                     }
-                    Divider()
+
                 }
 
             }
-
         }
-    }
 
+    }
+    )
 }
 
 
@@ -220,10 +203,9 @@ fun SearchMovieScreen(
  * olan POPUP film detayı penceremiz
  * */
 @Composable
-fun PopUpInfo(
-    specs: MovieDetail,
-    showMovieWindowFun: (Boolean) -> Unit
-) {
+fun PopUpInfo(specs: MovieDetail) {
+
+    val listState = rememberLazyListState()
 
     Box(modifier = Modifier.fillMaxSize()) {
         Popup(alignment = Alignment.Center) {
@@ -233,7 +215,7 @@ fun PopUpInfo(
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     OutlinedButton(  //POPUP ÇIKIŞ BUTONU
-                        onClick = { showMovieWindowFun(false) }, //POPUP pencere kapatma
+                        onClick = { showMovieWindow.value = false }, //POPUP pencere kapatma
                         shape = CircleShape,
                         elevation = ButtonDefaults.elevation(8.dp),
                         colors = ButtonDefaults.buttonColors(
@@ -249,13 +231,14 @@ fun PopUpInfo(
                 Modifier
                     .fillMaxSize()
                     .padding(30.dp)
-                    .border(
-                        BorderStroke(2.dp, Color.Red),
-                        shape = RoundedCornerShape(25.dp)
-                    )
+                    .border(BorderStroke(2.dp, Color.Red),
+                        shape = RoundedCornerShape(25.dp))
                     .background(Color.White, RoundedCornerShape(25.dp))
             ) {
                 LazyColumn(
+                    state = listState,
+                    modifier = Modifier.scrollable(listState,
+                        orientation = Orientation.Vertical)
                 ) {
                     item {  // specs değeri doğrudan constructor içerisinden çağırılıyor
                         Column {
@@ -294,26 +277,18 @@ fun PopUpInfo(
                             ) {
                                 Row() {
                                     Text(buildAnnotatedString { //POPUP FİLM IMDb PUANI
-                                        withStyle(
-                                            style = SpanStyle(
-                                                fontWeight = FontWeight.Bold
-                                            )
-                                        ) {
+                                        withStyle(style = SpanStyle(
+                                            fontWeight = FontWeight.Bold)) {
                                             append("IMDb Rating :")
                                         }
                                         append(specs.imdbRating!!)
                                     })
                                     Text(
-                                        text = "", modifier = Modifier.padding(
-                                            horizontal = 10.dp
-                                        )
-                                    )
+                                        text = "", modifier = Modifier.padding(horizontal = 10.dp
+                                        ))
                                     Text(buildAnnotatedString { //POPUP FİLM SÜRESİ
-                                        withStyle(
-                                            style = SpanStyle(
-                                                fontWeight = FontWeight.Bold
-                                            )
-                                        ) {
+                                        withStyle(style = SpanStyle(
+                                            fontWeight = FontWeight.Bold)) {
                                             append("Duration :")
                                         }
                                         append(specs.runtime!!)
@@ -321,21 +296,15 @@ fun PopUpInfo(
                                 }
                             }
                             Text(buildAnnotatedString { //POPUP FİLM AKTÖRLERİ
-                                withStyle(
-                                    style = SpanStyle(
-                                        fontWeight = FontWeight.Bold
-                                    )
-                                ) {
+                                withStyle(style = SpanStyle(
+                                    fontWeight = FontWeight.Bold)) {
                                     append("Actors :")
                                 }
                                 append(specs.actors!!)
                             }, modifier = Modifier.padding(horizontal = 20.dp))
                             Text(buildAnnotatedString { //POPUP FİLM YÖNETMENİ
-                                withStyle(
-                                    style = SpanStyle(
-                                        fontWeight = FontWeight.Bold
-                                    )
-                                ) {
+                                withStyle(style = SpanStyle(
+                                    fontWeight = FontWeight.Bold)) {
                                     append("Director :")
                                 }
                                 append(specs.director!!)
