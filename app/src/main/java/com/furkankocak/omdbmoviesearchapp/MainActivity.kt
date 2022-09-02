@@ -21,8 +21,10 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.furkankocak.omdbmoviesearchapp.navigator.Navigation
 import com.furkankocak.omdbmoviesearchapp.screen.PopUpInfo
 import com.furkankocak.omdbmoviesearchapp.screen.SearchMovieScreen
+import com.furkankocak.omdbmoviesearchapp.screen.SplashScreen
 import com.furkankocak.omdbmoviesearchapp.ui.theme.OMDbMovieSearchAppTheme
 import com.furkankocak.omdbmoviesearchapp.viewmodel.MainViewModel
 import kotlinx.coroutines.delay
@@ -57,60 +59,5 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-@Composable
-fun Navigation(
-    viewModel: MainViewModel
-) {
-    val navController = rememberNavController()
-    NavHost(
-        navController = navController,
-        startDestination = "splash_screen"
-    ) {
-        composable("splash_screen") {
-            Box(Modifier.fillMaxSize().background(androidx.compose.ui.graphics.Color.Red)) {
-                SplashScreen(navController = navController)
-            }
 
-        }
-        // Main Screen
-        composable("main_screen") {
-            SearchMovieScreen(
-                vmInput = viewModel,
-                onDetailsButtonClick = { viewModel.onShowMovieWindowChange(true) }
-            )
-        }
-    }
-}
 
-@Composable
-fun SplashScreen(navController: NavController) {
-    val scale = remember {
-        androidx.compose.animation.core.Animatable(0f)
-    }
-
-    // AnimationEffect
-    LaunchedEffect(key1 = true) {
-        scale.animateTo(
-            targetValue = 0.7f,
-            animationSpec = tween(
-                durationMillis = 800,
-                easing = {
-                    OvershootInterpolator(4f).getInterpolation(it)
-                })
-        )
-        delay(3000L)
-        navController.navigate("main_screen")
-    }
-
-    // Image
-    Box(
-        contentAlignment = Alignment.Center,
-        modifier = Modifier.fillMaxSize()
-    ) {
-        Image(
-            painter = painterResource(id = R.drawable.pngwing),
-            contentDescription = "Logo",
-            modifier = Modifier.scale(scale.value)
-        )
-    }
-}
