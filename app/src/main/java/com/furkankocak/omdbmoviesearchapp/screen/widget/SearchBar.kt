@@ -18,7 +18,7 @@ import com.furkankocak.omdbmoviesearchapp.viewmodel.MainViewModel
 
 @Composable
 fun SearchBar(
-    vmInput: MainViewModel,
+    viewModel: MainViewModel,
     onSearchClick: () -> Unit
 ){
 
@@ -49,7 +49,7 @@ fun SearchBar(
             )
             Button( //SEARCH BUTONU
                 onClick = { //TextField içerisindeki değer ile retrofit sorgusu ve clearfocus
-                    vmInput.getMovieList(searchValue)
+                    viewModel.getMovieList(searchValue)
                     onSearchClick()
                 },
                 modifier = Modifier

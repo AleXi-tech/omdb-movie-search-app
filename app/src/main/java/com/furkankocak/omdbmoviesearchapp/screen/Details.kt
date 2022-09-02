@@ -11,10 +11,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.Icon
-import androidx.compose.material.OutlinedButton
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.runtime.Composable
@@ -56,7 +53,7 @@ fun PopUpInfo(
                         shape = CircleShape,
                         elevation = ButtonDefaults.elevation(8.dp),
                         colors = ButtonDefaults.buttonColors(
-                            backgroundColor = Color.Red,
+                            backgroundColor = MaterialTheme.colors.primary,
                             contentColor = Color.White
                         )
                     ) {
@@ -69,7 +66,7 @@ fun PopUpInfo(
                     .fillMaxSize()
                     .padding(30.dp)
                     .border(
-                        BorderStroke(2.dp, Color.Red),
+                        BorderStroke(2.dp, MaterialTheme.colors.primary),
                         shape = RoundedCornerShape(25.dp)
                     )
                     .background(Color.White, RoundedCornerShape(25.dp))

@@ -21,11 +21,11 @@ import com.furkankocak.omdbmoviesearchapp.viewmodel.MainViewModel
 
 @Composable
 fun SearchResults(
-    vmInput: MainViewModel,
+    viewModel: MainViewModel,
     onDetailsButtonClick: () -> Unit
 ){
     LazyColumn(modifier = Modifier.fillMaxHeight()) {
-        items(vmInput.listOfMovies.movieList) { movie ->
+        items(viewModel.listOfMovies.movieList) { movie ->
             Column {
                 Row(
                     modifier = Modifier
@@ -72,7 +72,7 @@ fun SearchResults(
                                     ) {
                                         Button(onClick = { //POPUP ekranı için true değeri ve detay requesti
                                             onDetailsButtonClick()
-                                            vmInput.getMovieSpecs(movie.imdbID.toString())
+                                            viewModel.getMovieSpecs(movie.imdbID.toString())
                                         })
                                         { Text(text = "Details") }
                                     }

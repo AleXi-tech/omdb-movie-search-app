@@ -30,11 +30,10 @@ class MainViewModel : ViewModel() {
     }
 
 
-    //Film listesini coroutine ile çektiğimiz fonksiyon
+    //Content list
     fun getMovieList(searchValue: String) {
 
-        //  Her seferinde listeyi sıfırlıyoruz ki listenin null dönemesi durumunda
-        //ekrandaki liste sıfırlansın
+        //Refreshing list to show blank screen on null returns
         listOfMovies = listOfMovies.copy(movieList = listOfNotNull())
 
         viewModelScope.launch {
@@ -54,10 +53,10 @@ class MainViewModel : ViewModel() {
         }
     }
 
-    //Film detayları çekme
+    //Content details
     fun getMovieSpecs(searchValue: String) {
 
-        //Sıfırlama
+        //Refresh
         movieSpecs = movieSpecs.copy(movieDetail = null)
 
         viewModelScope.launch {
@@ -74,7 +73,7 @@ class MainViewModel : ViewModel() {
     }
 }
 
-//Doğrudan state kontrolü yapamadığım için data class lar ile atadım
+
 data class MovieListState(
     val movieList: List<Movie>
 )

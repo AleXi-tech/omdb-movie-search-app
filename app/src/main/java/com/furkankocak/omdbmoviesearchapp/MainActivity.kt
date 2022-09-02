@@ -21,11 +21,8 @@ class MainActivity : ComponentActivity() {
 
             OMDbMovieSearchAppTheme {
                 Navigation(viewModel)
-                /**
-                 * POPUP penceresinin açılması için showMovieWindow adında State oluşturduk
-                 * ve DETAILS ve EXIT butonlarının onClick metodları içerisnde boolean
-                 * değerini kontrol ederek if kontrolü ile açılıp kapanmasını denetliyoruz.
-                 */
+
+                //Pop Up window controller
                 if (viewModel.showMovieWindow) {
                     viewModel.movieSpecs.movieDetail?.let {
                         PopUpInfo(

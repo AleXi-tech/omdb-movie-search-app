@@ -3,6 +3,7 @@ package com.furkankocak.omdbmoviesearchapp.navigator
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -23,7 +24,7 @@ fun Navigation(
         startDestination = "splash_screen"
     ) {
         composable("splash_screen") {
-            Box(Modifier.fillMaxSize().background(Color.Red)) {
+            Box(Modifier.fillMaxSize().background(MaterialTheme.colors.primary)) {
                 SplashScreen(navController = navController)
             }
 
@@ -31,7 +32,7 @@ fun Navigation(
         // Main Screen
         composable("main_screen") {
             SearchMovieScreen(
-                vmInput = viewModel,
+                viewModel = viewModel,
                 onDetailsButtonClick = { viewModel.onShowMovieWindowChange(true) }
             )
         }

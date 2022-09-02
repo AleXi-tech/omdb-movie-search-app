@@ -2,7 +2,7 @@
 <resources>
 
     <style name="Theme.OMDbMovieSearchApp" parent="android:Theme.Material.Light.NoActionBar">
-        <item name="android:statusBarColor">#FF0000</item>
-        <item name="android:windowBackground">#FF0000</item>
+        <item name="android:statusBarColor">#DB0000</item>
+        <item name="android:windowBackground">#DB0000</item>
     </style>
 </resources>
