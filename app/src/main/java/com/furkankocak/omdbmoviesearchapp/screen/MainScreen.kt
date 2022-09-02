@@ -19,7 +19,7 @@ import com.furkankocak.omdbmoviesearchapp.viewmodel.MainViewModel
 @Composable
 fun SearchMovieScreen(
     viewModel: MainViewModel,
-    onDetailsButtonClick: () -> Unit
+    onDetailsButtonClick: () -> Unit,
 ) {
 
     val focusManager = LocalFocusManager.current
@@ -48,7 +48,7 @@ fun SearchMovieScreen(
                         onDetailsButtonClick()
                     }
                 )
-                //Search Bar bottom grey to transparent fade effect
+                //Search Bar bottom white to transparent fade effect
                 Fader()
             }
         }

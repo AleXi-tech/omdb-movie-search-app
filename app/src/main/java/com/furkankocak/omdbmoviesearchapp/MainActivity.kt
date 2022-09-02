@@ -5,7 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import com.furkankocak.omdbmoviesearchapp.navigator.Navigation
-import com.furkankocak.omdbmoviesearchapp.screen.PopUpInfo
+import com.furkankocak.omdbmoviesearchapp.screen.DetailScreen
 import com.furkankocak.omdbmoviesearchapp.ui.theme.OMDbMovieSearchAppTheme
 import com.furkankocak.omdbmoviesearchapp.viewmodel.MainViewModel
 
@@ -25,7 +25,7 @@ class MainActivity : ComponentActivity() {
                 //Pop Up window controller
                 if (viewModel.showMovieWindow) {
                     viewModel.movieSpecs.movieDetail?.let {
-                        PopUpInfo(
+                        DetailScreen(
                             it,
                             onExitButtonClick = { viewModel.onShowMovieWindowChange(false) }
                         )
