@@ -48,10 +48,6 @@ fun DetailScreen(
     ) {
         Column{
 
-            DetailTopBar(
-                onExitButtonClick = onExitButtonClick
-            )
-
             Box{
                 LazyColumn(
                     state = listState,
@@ -172,7 +168,10 @@ fun DetailScreen(
                         }
                     }
                 }
-                Fader()
+                DetailTopBar(
+                    onExitButtonClick = onExitButtonClick
+                )
+
             }
         }
 

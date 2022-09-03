@@ -1,13 +1,9 @@
 package com.furkankocak.omdbmoviesearchapp.screen.widget
 
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.Icon
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.OutlinedButton
+import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
@@ -24,28 +20,39 @@ fun DetailTopBar(
 ){
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier.fillMaxWidth().padding(8.dp)
     ) {
         OutlinedButton(  //POPUP ÇIKIŞ BUTONU
             onClick = onExitButtonClick, //POPUP pencere kapatma
-
+            shape = CircleShape,
             colors = ButtonDefaults.buttonColors(
                 backgroundColor = MaterialTheme.colors.primary,
                 contentColor = Color.White
-            )
+            ),
+            modifier = Modifier.size(48.dp),
+            contentPadding = PaddingValues(8.dp),
+            elevation = ButtonDefaults.elevation(8.dp)
         ) {
-            Icon(Icons.Default.ArrowBack, contentDescription = "Close")
+            Icon(
+                Icons.Default.ArrowBack,
+                contentDescription = "Close"
+            )
         }
         Spacer(Modifier.weight(1f))
         OutlinedButton(  //POPUP ÇIKIŞ BUTONU
             onClick = onExitButtonClick, //POPUP pencere kapatma
-
+            shape = CircleShape,
             colors = ButtonDefaults.buttonColors(
                 backgroundColor = Color(255,184,28),
                 contentColor = Color.White
-            )
+            ),
+            modifier = Modifier.size(48.dp),
+            contentPadding = PaddingValues(8.dp)
         ) {
-            Icon(Icons.Default.Star, contentDescription = "Close")
+            Icon(
+                Icons.Default.Star,
+                contentDescription = "Close"
+            )
         }
 
     }
