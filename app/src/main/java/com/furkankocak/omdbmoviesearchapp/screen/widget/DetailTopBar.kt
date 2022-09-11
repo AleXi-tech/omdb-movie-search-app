@@ -1,12 +1,12 @@
 package com.furkankocak.omdbmoviesearchapp.screen.widget
 
-import androidx.compose.foundation.background
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -20,16 +20,18 @@ fun DetailTopBar(
 ){
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier.fillMaxWidth().padding(8.dp)
+        modifier = Modifier.fillMaxWidth().padding(16.dp)
     ) {
         OutlinedButton(  //POPUP ÇIKIŞ BUTONU
             onClick = onExitButtonClick, //POPUP pencere kapatma
             shape = CircleShape,
             colors = ButtonDefaults.buttonColors(
-                backgroundColor = MaterialTheme.colors.primary,
+                backgroundColor = Color.Black.copy(alpha = 0.5f),
                 contentColor = Color.White
             ),
-            modifier = Modifier.size(48.dp),
+            modifier = Modifier
+                .size(36.dp)
+                .border(BorderStroke(1.dp, Color.White.copy(alpha = 0.6f)), CircleShape),
             contentPadding = PaddingValues(8.dp),
             elevation = ButtonDefaults.elevation(8.dp)
         ) {
@@ -43,10 +45,12 @@ fun DetailTopBar(
             onClick = onExitButtonClick, //POPUP pencere kapatma
             shape = CircleShape,
             colors = ButtonDefaults.buttonColors(
-                backgroundColor = Color(255,184,28),
+                backgroundColor = Color.Black.copy(alpha = 0.5f),
                 contentColor = Color.White
             ),
-            modifier = Modifier.size(48.dp),
+            modifier = Modifier
+                .size(36.dp)
+                .border(BorderStroke(1.dp, Color.White.copy(alpha = 0.6f)), CircleShape),
             contentPadding = PaddingValues(8.dp)
         ) {
             Icon(

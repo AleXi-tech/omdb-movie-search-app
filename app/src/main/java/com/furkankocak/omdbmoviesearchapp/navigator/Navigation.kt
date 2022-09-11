@@ -25,7 +25,7 @@ fun Navigation(
     ) {
         // Splash Screen
         composable("splash_screen") {
-            Box(Modifier.fillMaxSize().background(MaterialTheme.colors.primary)) {
+            Box(Modifier.fillMaxSize().background(Color.Black)) {
                 SplashScreen(navController = navController)
             }
 

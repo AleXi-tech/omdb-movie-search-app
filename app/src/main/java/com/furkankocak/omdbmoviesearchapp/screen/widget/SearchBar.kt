@@ -1,5 +1,6 @@
 package com.furkankocak.omdbmoviesearchapp.screen.widget
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
@@ -12,6 +13,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.furkankocak.omdbmoviesearchapp.viewmodel.MainViewModel
@@ -20,12 +22,14 @@ import com.furkankocak.omdbmoviesearchapp.viewmodel.MainViewModel
 fun SearchBar(
     viewModel: MainViewModel,
     onSearchClick: () -> Unit
-){
+) {
 
     var searchValue by rememberSaveable { mutableStateOf("") }
 
+    val outlineWhite = Color.White.copy(alpha = 0.5f)
+
     Box(
-        modifier = Modifier.fillMaxWidth().height(64.dp),
+        modifier = Modifier.fillMaxWidth().height(68.dp).padding(bottom = 4.dp),
         contentAlignment = Alignment.Center
     ) {
         Row(
@@ -34,7 +38,12 @@ fun SearchBar(
         ) {
             OutlinedTextField( //Arama yapılacak TextField
                 value = searchValue,
-                colors = TextFieldDefaults.textFieldColors(textColor = Color.Black),
+                colors = TextFieldDefaults.textFieldColors(
+                    textColor = Color.White.copy(alpha = 0.75f),
+                    leadingIconColor = outlineWhite,
+                    unfocusedLabelColor = outlineWhite,
+                    unfocusedIndicatorColor = outlineWhite,
+                ),
                 onValueChange = { searchValue = it },
                 modifier = Modifier
                     .fillMaxWidth(0.65f)
@@ -42,7 +51,11 @@ fun SearchBar(
                     .weight(1f),
                 label = { Text("Search Movie Title") },
                 leadingIcon = {
-                    Icon(Icons.Default.Search, contentDescription = "Search Icon")
+                    Icon(
+                        Icons.Default.Search,
+                        contentDescription = "Search Icon",
+                        modifier = Modifier.padding(start = 4.dp)
+                    )
                 },
                 shape = RoundedCornerShape(30.dp)
 

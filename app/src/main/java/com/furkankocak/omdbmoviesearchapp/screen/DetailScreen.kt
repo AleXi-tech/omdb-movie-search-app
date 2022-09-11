@@ -7,15 +7,16 @@ import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -24,9 +25,10 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
+import coil.request.ImageRequest
+import coil.size.Size
 import com.furkankocak.omdbmoviesearchapp.data.MovieDetail
 import com.furkankocak.omdbmoviesearchapp.screen.widget.DetailTopBar
-import com.furkankocak.omdbmoviesearchapp.screen.widget.Fader
 
 /**
  * Ekrana gelen sonuçlar içerisinde DETAILS butonuna tıklama sonucunda açılacak
@@ -43,138 +45,157 @@ fun DetailScreen(
     Surface(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.White),
-        contentColor = Color.Black
+            .background(Color.Black),
+        contentColor = Color.White,
+        color = Color.Black
     ) {
-        Column{
 
-            Box{
-                LazyColumn(
-                    state = listState,
-                    modifier = Modifier.scrollable(
-                        listState,
-                        orientation = Orientation.Vertical
-                    ).padding(top = 8.dp)
-                ) {
-                    item {  // specs değeri doğrudan constructor içerisinden çağırılıyor
-                        Column {
+        Box(contentAlignment = Alignment.TopCenter) {
 
-                            Box(
-                                contentAlignment = Alignment.TopCenter,
-                                modifier = Modifier.fillMaxWidth().padding(8.dp)
-                            ) {
-                                Image( //POPUP FİLM POSTERİ
-                                    painter = rememberAsyncImagePainter(specs.poster),
-                                    contentDescription = null,
-                                    modifier = Modifier
-                                        .wrapContentWidth()
-                                        .height(360.dp),
-                                    contentScale = ContentScale.FillHeight
-                                )
-                            }
-                            Box(
-                                contentAlignment = Alignment.TopCenter,
+            LazyColumn(
+                state = listState,
+                modifier = Modifier.scrollable(
+                    listState,
+                    orientation = Orientation.Vertical
+                )
+            ) {
+                item {  // specs değeri doğrudan constructor içerisinden çağırılıyor
+
+                    val model = ImageRequest.Builder(LocalContext.current)
+                        .data(specs.poster)
+                        .size(Size.ORIGINAL)
+                        .crossfade(true)
+                        .build()
+                    val painter = rememberAsyncImagePainter(model)
+
+                    Column {
+
+                        Box(
+                            contentAlignment = Alignment.BottomCenter,
+                            modifier = Modifier
+                                .fillMaxSize().padding(24.dp)
+                        ) {
+
+                            Image( //POPUP FİLM POSTERİ
+                                painter = painter,
+                                contentDescription = null,
                                 modifier = Modifier
-                                    .fillMaxWidth()
-                                    .wrapContentHeight()
-                            ) {
-                                Text( //POPUP FİLM BAŞLIĞI
-                                    text = specs.title!!,
-                                    fontSize = 20.sp,
-                                    fontWeight = FontWeight.Bold,
-                                    textAlign = TextAlign.Center,
-                                    modifier = Modifier
-                                        .padding(horizontal = 10.dp)
-                                )
-                            }
-                            Box(
-                                contentAlignment = Alignment.TopCenter,
+                                    .fillMaxSize()
+                                    .clip(RoundedCornerShape(24.dp)),
+                                contentScale = ContentScale.FillWidth
+                            )
+
+                            Box( //Bottom fade effect over poster
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .height(50.dp)
-                            ) {
-                                Row {
-                                    Text(buildAnnotatedString { //POPUP FİLM IMDb PUANI
-                                        withStyle(
-                                            style = SpanStyle(
-                                                fontWeight = FontWeight.Bold
-                                            )
-                                        ) {
-                                            append("IMDb Rating :")
-                                        }
-                                        append(specs.imdbRating!!)
-                                    })
-                                    Text(
-                                        text = "", modifier = Modifier.padding(
-                                            horizontal = 10.dp
+                                    .background(
+                                        brush = Brush.verticalGradient(
+                                            colors = listOf(Color.Transparent, Color.Black)
                                         )
                                     )
-                                    Text(buildAnnotatedString { //POPUP FİLM SÜRESİ
-                                        withStyle(
-                                            style = SpanStyle(
-                                                fontWeight = FontWeight.Bold
-                                            )
-                                        ) {
-                                            append("Duration :")
-                                        }
-                                        append(specs.runtime!!)
-                                    })
-                                }
-                            }
-                            Text(buildAnnotatedString { //POPUP FİLM AKTÖRLERİ
-                                withStyle(
-                                    style = SpanStyle(
-                                        fontWeight = FontWeight.Bold
-                                    )
-                                ) {
-                                    append("Actors :")
-                                }
-                                append(specs.actors!!)
-                            }, modifier = Modifier.padding(horizontal = 20.dp))
-                            Text(buildAnnotatedString { //POPUP FİLM YÖNETMENİ
-                                withStyle(
-                                    style = SpanStyle(
-                                        fontWeight = FontWeight.Bold
-                                    )
-                                ) {
-                                    append("Director :")
-                                }
-                                append(specs.director!!)
-                            }, modifier = Modifier.padding(horizontal = 20.dp))
-                            Box(
-                                contentAlignment = Alignment.Center,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(10.dp)
-                            ) {
-                                Text(
-                                    text = "STORY", fontWeight = FontWeight.Bold
-                                )
-                            }
-                            Box(
-                                contentAlignment = Alignment.Center,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                            ) {
-                                Text( //POPUP FİLM HİKAYE İÇERİĞİ
-                                    text = specs.plot!!,
-                                    modifier = Modifier
-                                        .padding(horizontal = 20.dp)
-                                        .padding(bottom = 30.dp),
-                                    textAlign = TextAlign.Center
-                                )
-                            }
+                            )
+                        }
 
+                        Box(
+                            contentAlignment = Alignment.TopCenter,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .wrapContentHeight()
+                        ) {
+                            Text( //POPUP FİLM BAŞLIĞI
+                                text = specs.title!!,
+                                fontSize = 20.sp,
+                                fontWeight = FontWeight.Bold,
+                                textAlign = TextAlign.Center,
+                                modifier = Modifier
+                                    .padding(horizontal = 10.dp)
+                            )
+                        }
+                        Box(
+                            contentAlignment = Alignment.TopCenter,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(50.dp)
+                        ) {
+                            Row {
+                                Text(buildAnnotatedString { //POPUP FİLM IMDb PUANI
+                                    withStyle(
+                                        style = SpanStyle(
+                                            fontWeight = FontWeight.Bold
+                                        )
+                                    ) {
+                                        append("IMDb Rating :")
+                                    }
+                                    append(specs.imdbRating!!)
+                                })
+                                Text(
+                                    text = "", modifier = Modifier.padding(
+                                        horizontal = 10.dp
+                                    )
+                                )
+                                Text(buildAnnotatedString { //POPUP FİLM SÜRESİ
+                                    withStyle(
+                                        style = SpanStyle(
+                                            fontWeight = FontWeight.Bold
+                                        )
+                                    ) {
+                                        append("Duration :")
+                                    }
+                                    append(specs.runtime!!)
+                                })
+                            }
+                        }
+                        Text(buildAnnotatedString { //POPUP FİLM AKTÖRLERİ
+                            withStyle(
+                                style = SpanStyle(
+                                    fontWeight = FontWeight.Bold
+                                )
+                            ) {
+                                append("Actors :")
+                            }
+                            append(specs.actors!!)
+                        }, modifier = Modifier.padding(horizontal = 20.dp))
+                        Text(buildAnnotatedString { //POPUP FİLM YÖNETMENİ
+                            withStyle(
+                                style = SpanStyle(
+                                    fontWeight = FontWeight.Bold
+                                )
+                            ) {
+                                append("Director :")
+                            }
+                            append(specs.director!!)
+                        }, modifier = Modifier.padding(horizontal = 20.dp))
+                        Box(
+                            contentAlignment = Alignment.Center,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(10.dp)
+                        ) {
+                            Text(
+                                text = "STORY", fontWeight = FontWeight.Bold
+                            )
+                        }
+                        Box(
+                            contentAlignment = Alignment.Center,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                        ) {
+                            Text( //POPUP FİLM HİKAYE İÇERİĞİ
+                                text = specs.plot!!,
+                                modifier = Modifier
+                                    .padding(horizontal = 20.dp)
+                                    .padding(bottom = 30.dp),
+                                textAlign = TextAlign.Center
+                            )
                         }
                     }
                 }
-                DetailTopBar(
-                    onExitButtonClick = onExitButtonClick
-                )
-
             }
+            DetailTopBar(
+                onExitButtonClick = onExitButtonClick
+            )
         }
-
     }
 }
 

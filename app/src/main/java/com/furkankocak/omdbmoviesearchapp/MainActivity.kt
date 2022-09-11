@@ -22,7 +22,7 @@ class MainActivity : ComponentActivity() {
             OMDbMovieSearchAppTheme {
                 Navigation(viewModel)
 
-                //Pop Up window controller
+                //Detail screen controller
                 if (viewModel.showMovieWindow) {
                     viewModel.movieSpecs.movieDetail?.let {
                         DetailScreen(
@@ -33,6 +33,7 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+
     }
 }
 
